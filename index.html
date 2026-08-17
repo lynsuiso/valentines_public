@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fatty Fat</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #ffe5f6;
+      height: 100vh;
+      display: flex;         
+      justify-content: center;    
+      align-items: center;        
+      overflow: hidden;
+    }
+
+    /*intro */
+    .intro-screen {
+      position: fixed;
+      inset: 0;
+      background-color: #dbb1c3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      transition: opacity 1s ease;
+    }
+
+    .intro-screen.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .intro-screen img {
+      width: min(700px, 85vw);
+      cursor: pointer;
+    }
+
+    .main-content {
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+
+    .main-content.show {
+      opacity: 1;
+    }
+
+    .hamster-box {
+      width: 700px;
+      height: 750px;
+      border-radius: 30px;
+      
+      transform: scale(var(--scale, 1));
+      transform-origin: center;
+
+      background: linear-gradient(
+        to bottom,
+        #6e86d3 0%,
+        #f3afdc 40%
+      );
+
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 30px;
+      box-sizing: border-box;
+    }
+
+    .top-bar {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .stats-mult {
+      display: flex;
+      align-items: center;
+
+      justify-content: flex-start; 
+      width: 143px;            
+            
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Press Start 2P', cursive; 
+      font-size: 16px;
+      color: #ffffff; 
+    }
+
+    .stat-icon {
+      width: auto;
+      height: 60px; 
+    }
+
+    /*powerup text*/
+    .powerup-text {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 12px;
+      font-weight: bold;
+      animation: blink 0.5s infinite alternate;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    @keyframes blink {
+      0% { color: #ffffff; }
+      100% { color: #f476c9; }
+    }
+
+    .heart-buttons-container {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .heart-container img {
+      width: auto;
+      height: 80px; 
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo img {
+      width: auto;
+      height: 175px;
+    }
+
+    .button-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .button-stack button {
+      padding: 5px 12px;
+      font-size: 14px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .minigame-area {
+      position: relative;
+      width: 100%;
+      flex-grow: 1;
+      background-color: #ffe4f2;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .minigame-area img {
+      position: absolute;
+      bottom: 10px;
+      width: 80px;
+    }
+
+    .falling-heart {
+      width: 50px;
+      position: absolute;
+      top: -60px;
+    }
+
+    .gif-container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 20px;
+    }
+
+    .gif-container img {
+      cursor: pointer;
+      width: auto;
+    }
+
+    .ham1 {
+      height: 150px;
+    }
+
+    .ham2 {
+      height: 140px;
+    }
+
+    .button-stack img {
+      width: 120px;         
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .button-stack img:hover {
+      transform: scale(1.05);
+    }
+
+    .powerup-stat {
+      display: flex;
+      flex-direction: column;  
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stat-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .powerup-bottom {
+      display: flex;
+      flex-direction: row;  
+      align-items: center;
+      gap: 10px;         
+    }
+
+    .spacer {
+      height: 10px;
+    }
+
+    .spacer2 {
+      width: 25px;
+    }
+
+    .center-heart {
+      height: 140px;
+      width: auto;
+    }
+
+    .intro2-screen {
+      position: fixed;
+      inset: 0;
+      background-color: #ffe5f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 998;
+
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1s ease;
+    }
+
+    .intro2-screen.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .intro2-screen.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .intro2-box {
+      width: min(750px, 90vw);
+      height: auto;
+      min-height: 300px;
+      background-color: #ffffff;
+      border-radius: 25px;
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      padding: 40px;
+      box-sizing: border-box;
+    }
+
+    .intro2-text {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 16px;
+      color: #d86ab1;
+
+      width: 60%;
+      line-height: 1.8;
+    }
+
+    .intro2-hamster {
+      width: 180px;
+      height: auto;
+    }
+
+  </style>
+</head>
+
+<body>
+  <!--intro-->
+  <div class="intro-screen" id="introScreen">
+    <img id="envImage" src="env_static.png" alt="Envelope Intro">
+  </div>
+
+    <!--intro2 screen-->
+  <div class="intro2-screen" id="intro2Screen">
+    <div class="intro2-box">
+
+      <div class="intro2-text" id="intro2Text"></div>
+      <img src="pink_ham2.png" class="intro2-hamster">
+
+    </div>
+  </div>
+
+  <!--main stuff-->
+  <div class="main-content" id="mainContent">
+    <div class="hamster-box">
+      <div class="top-bar">
+
+<!--stats-->
+<div class="stats-mult">
+  <div class="stats-row">
+    <div class="stat-item">
+      <img src="norm_heart_static.png" alt="Heart" class="stat-icon">
+      <span id="heartsCollected" class="stat-text">0</span>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="stat-item">
+      <img src="sunf_seed_static.png" alt="Seed" class="stat-icon">
+      <span id="seedsCollected" class="stat-text">0</span>
+    </div>
+
+    <div class="spacer"></div>
+
+      <div id="powerupContainer" class="powerup-bottom" style="display:none;">
+    <span class="powerup-text">2x hearts</span>
+    <span id="powerupTimer" class="powerup-text">5s</span>
+  </div>
+  
+  </div>
+
+</div>
+
+  <div class="logo-container">
+    <div class="logo"><img src="logo.png" alt="Logo" class="logo-img"></div>
+    
+  </div>
+<div class="heart-buttons-container">
+  <div class="button-stack">
+    <img id="startBtn" src="start.png" alt="Start">
+    <img id="stopBtn" src="stop.png" alt="Stop">
+    <img id="restartBtn" src="restart.png" alt="Restart">
+  </div>
+</div>
+</div>
+
+      <!--minigame-->
+      <div class="minigame-area" id="minigameArea">
+        <img id="playerHamster" src="right_stand.gif" alt="hamster">
+      </div>
+
+<!--hams-->
+<div class="gif-container">
+  <img src="black_ham_static.png"
+       data-static="black_ham_static.png"
+       data-animated="black_ham.gif"
+       class="toggle-gif ham1">
+
+<img src="heart_seed.gif"
+     alt="heart gif"
+     class="center-heart">
+
+<img id="pinkHam"
+     src="pink_ham_static.png"
+     data-static="pink_ham_static.png"
+     data-animated="pink_ham.gif"
+     class="toggle-gif ham2">
+</div>
+  </div>
+  </div>
+
+  <script>
+    const introScreen = document.getElementById("introScreen");
+    const envImage = document.getElementById("envImage");
+
+    const intro2Screen = document.getElementById("intro2Screen");
+    const intro2Text = document.getElementById("intro2Text");
+
+    const mainContent = document.getElementById("mainContent");
+
+    let introStarted = false;
+
+    envImage.addEventListener("click", () => {
+      if (introStarted) return;
+      introStarted = true;
+      envImage.style.pointerEvents = "none";  
+      envImage.style.cursor = "default";
+      envImage.src = "env.gif";
+
+      setTimeout(() => {
+        introScreen.classList.add("fade-out");
+        intro2Screen.classList.add("show");
+        startIntro2Typing();
+      }, 2000);
+    });
+
+    const intro2Message =
+      "This is my valentines game I did for my boyfriend!\n\n";
+
+    let intro2Index = 0;
+    let intro2Done = false;
+    let intro2Interval;
+
+    /*fit to screen*/
+    const hamsterBox = document.querySelector(".hamster-box");
+
+    function fitToScreen() {
+      const scale = Math.min(
+        window.innerWidth / 760,
+        window.innerHeight / 810,
+        1
+      );
+      hamsterBox.style.setProperty("--scale", scale);
+    }
+
+    window.addEventListener("resize", fitToScreen);
+    fitToScreen();
+
+    function startIntro2Typing() {
+      clearInterval(intro2Interval);
+      intro2Text.textContent = "";
+      intro2Index = 0;
+      intro2Done = false;
+
+      intro2Interval = setInterval(() => {
+        if (intro2Index >= intro2Message.length) {
+          clearInterval(intro2Interval);
+          intro2Done = true;
+          return;
+        }
+        intro2Text.textContent += intro2Message[intro2Index++];
+      }, 40);
+    }
+
+    intro2Screen.addEventListener("click", () => {
+
+      if (!intro2Done) {
+        clearInterval(intro2Interval);
+        intro2Text.textContent = intro2Message;
+        intro2Done = true;
+        return;
+      }
+
+      intro2Screen.classList.add("fade-out");
+
+      setTimeout(() => {
+        intro2Screen.style.display = "none";
+        mainContent.classList.add("show");
+      }, 1000);
+    });
+
+/*gif toggling + pink ham reaction*/
+const gifs = document.querySelectorAll(".toggle-gif");
+
+const pinkHam = document.getElementById("pinkHam");
+
+let pinkHamCurrentState = "static";
+let pinkHamReactionTimeout = null;
+
+gifs.forEach(gif => {
+  let isMoving = false;
+
+  gif.addEventListener("click", () => {
+    if (!isMoving) {
+      gif.src = gif.dataset.animated;
+      isMoving = true;
+
+      if (gif.id === "pinkHam") pinkHamCurrentState = "animated";
+
+    } else {
+      gif.src = gif.dataset.static;
+      isMoving = false;
+      if (gif.id === "pinkHam") pinkHamCurrentState = "static";
+    }
+  });
+});
+
+/*game logic*/
+const hamster = document.getElementById("playerHamster");
+const gameArea = document.getElementById("minigameArea");
+const heartsCollectedText = document.getElementById("heartsCollected");
+const seedsCollectedText = document.getElementById("seedsCollected");
+const powerupContainer = document.getElementById("powerupContainer");
+const powerupTimerText = document.getElementById("powerupTimer");
+
+const startBtn = document.getElementById("startBtn");
+const stopBtn = document.getElementById("stopBtn");
+const restartBtn = document.getElementById("restartBtn");
+
+let hamsterX = 0;
+let hamsterSpeed = 50;
+let hearts = [];
+let collected = 0;
+let storedPowerups = 0;
+let activePowerup = false;
+let heartSpeed = 2;
+let spawnInterval = 2000;
+let idleTimeout;
+let gameRunning = false;
+let spawnTimer = null;
+let powerupTimer = null;
+let powerupDuration = 5;
+let powerupRemaining = 0;  
+let gameLoopRunning = false;
+
+const gameWidth = gameArea.clientWidth;
+const gameHeight = gameArea.clientHeight;
+
+hamsterX = gameWidth / 2 - hamster.clientWidth / 2;
+hamster.style.left = hamsterX + "px";
+
+/*pink ham reaction*/
+function reactPinkHam(type) {
+  if (!pinkHam) return;
+
+  if (pinkHamReactionTimeout) {
+    clearTimeout(pinkHamReactionTimeout);
+  }
+
+  const previousSrc =
+    pinkHamCurrentState === "animated"
+      ? pinkHam.dataset.animated
+      : pinkHam.dataset.static;
+
+  if (type === "happy") {
+    pinkHam.src = "pink_ham_happy.png";
+  } else if (type === "sad") {
+    pinkHam.src = "pink_ham_sad.png";
+  }
+  pinkHamReactionTimeout = setTimeout(() => {
+    pinkHam.src = previousSrc;
+  }, 800);
+}
+
+
+/*spawning stuff*/
+function spawnHeart() {
+  if (!gameRunning) return;
+  const heart = document.createElement("img");
+  const isSpecial = Math.random() < 0.5;
+  heart.src = isSpecial ? "sunf_seed.gif" : "norm_heart.gif";
+  heart.classList.add("falling-heart");
+  heart.dataset.special = isSpecial;
+  heart.style.left = Math.random() * (gameWidth - 50) + "px";
+  heart.style.top = "-60px";
+  gameArea.appendChild(heart);
+  hearts.push(heart);
+}
+
+/*loop*/
+function gameLoop() {
+  if (gameLoopRunning) return; 
+  gameLoopRunning = true;
+
+  function loop() {
+    if (!gameRunning) {
+      gameLoopRunning = false;
+      return;
+    }
+
+    for (let i = hearts.length - 1; i >= 0; i--) {
+      const heart = hearts[i];
+      const top = parseFloat(heart.style.top);
+      heart.style.top = top + heartSpeed + "px";
+
+      const heartRect = heart.getBoundingClientRect();
+      const hamsterRect = hamster.getBoundingClientRect();
+
+      if (
+        heartRect.bottom > hamsterRect.top &&
+        heartRect.top < hamsterRect.bottom &&
+        heartRect.left < hamsterRect.right &&
+        heartRect.right > hamsterRect.left
+      ) {
+        if (heart.dataset.special === "true") {
+          storedPowerups++;
+          seedsCollectedText.textContent = storedPowerups;
+          reactPinkHam("happy");
+
+        } else {
+          collected += activePowerup ? 2 : 1;
+          heartsCollectedText.textContent = collected;
+          reactPinkHam("happy");
+        }
+        heart.remove();
+        hearts.splice(i, 1);
+        continue;  
+      }
+
+      if (parseFloat(heart.style.top) > gameHeight) {
+        reactPinkHam("sad");
+
+        heart.remove();
+        hearts.splice(i, 1);
+      }
+    }
+
+    requestAnimationFrame(loop);
+  }
+
+  loop();
+}
+
+/*idle animns*/
+function setIdleHamster() {
+  if (!activePowerup) {
+    hamster.src = hamsterX < gameWidth / 2 ? "left_stand.gif" : "right_stand.gif";
+  } else {
+    hamster.src = hamsterX < gameWidth / 2 ? "ham_powa_left_stand.gif" : "ham_powa_right_stand.gif";
+  }
+}
+
+/*sunf powerup*/
+function startPowerup() {
+  if (storedPowerups <= 0 || activePowerup) return;
+  activePowerup = true;
+  storedPowerups--;
+  seedsCollectedText.textContent = storedPowerups;
+  powerupContainer.style.display = "flex";
+  powerupRemaining = powerupDuration;
+  powerupTimerText.textContent = powerupRemaining + "s";
+  hamster.src = "ham_powa.gif";
+  runPowerupTimer();
+}
+
+function runPowerupTimer() {
+  if (powerupTimer) clearInterval(powerupTimer);
+  powerupTimer = setInterval(() => {
+    powerupRemaining--;
+    powerupTimerText.textContent = powerupRemaining + "s";
+    if (powerupRemaining <= 0) {
+      endPowerup();
+    }
+  }, 1000);
+}
+
+function pausePowerupTimer() {
+  if (!powerupTimer) return;
+  clearInterval(powerupTimer);
+  powerupTimer = null;  
+}
+
+function endPowerup() {
+  if (powerupTimer) clearInterval(powerupTimer);
+  powerupTimer = null;
+  powerupRemaining = 0;
+  activePowerup = false;
+  powerupContainer.style.display = "none";
+  setIdleHamster();
+}
+
+/*keybinds*/
+document.addEventListener("keydown", (e) => {
+  if (!gameRunning) return;
+  clearTimeout(idleTimeout);
+
+  if (e.key === "a" || e.key === "A") {
+    hamsterX = Math.max(0, hamsterX - hamsterSpeed);
+    hamster.src = activePowerup ? "ham_powa_left_run.gif" : "left_run.gif";
+  } else if (e.key === "d" || e.key === "D") {
+    hamsterX = Math.min(gameWidth - hamster.clientWidth, hamsterX + hamsterSpeed);
+    hamster.src = activePowerup ? "ham_powa_right_run.gif" : "right_run.gif";
+  } else if (e.key === "e" || e.key === "E") {
+    startPowerup();
+  }
+
+  hamster.style.left = hamsterX + "px";
+  idleTimeout = setTimeout(setIdleHamster, 1000);
+});
+
+/*buttons*/
+function startGame() {
+  if (gameRunning) return;
+  gameRunning = true;
+
+  if (!spawnTimer) spawnTimer = setInterval(spawnHeart, spawnInterval);
+
+  if (activePowerup && powerupRemaining > 0 && !powerupTimer) runPowerupTimer();
+
+  gameLoop();
+}
+
+function stopGame() {
+  gameRunning = false;
+  if (spawnTimer) {
+    clearInterval(spawnTimer);
+    spawnTimer = null;
+  }
+  pausePowerupTimer();
+}
+
+function restartGame() {
+  stopGame();
+
+  hearts.forEach(h => h.remove());
+  hearts = [];
+
+  collected = 0;
+  storedPowerups = 0;
+  heartsCollectedText.textContent = collected;
+  seedsCollectedText.textContent = storedPowerups;
+
+  hamsterX = gameWidth / 2 - hamster.clientWidth / 2;
+  hamster.style.left = hamsterX + "px";
+  endPowerup();
+
+  startGame();
+}
+
+function addHoverEffect(imgId, normalSrc, hoverSrc) {
+  const img = document.getElementById(imgId);
+  img.addEventListener("mouseenter", () => img.src = hoverSrc);
+  img.addEventListener("mouseleave", () => img.src = normalSrc);
+}
+
+addHoverEffect("startBtn", "start.png", "start_hov.png");
+addHoverEffect("stopBtn", "stop.png", "stop_hov.png");
+addHoverEffect("restartBtn", "restart.png", "restart_hov.png");
+
+
+startBtn.addEventListener("click", startGame);
+stopBtn.addEventListener("click", stopGame);
+restartBtn.addEventListener("click", restartGame);
+
+</script>
+
+</body>
+</html>
